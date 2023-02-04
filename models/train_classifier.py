@@ -11,7 +11,7 @@ from nltk.stem.porter import PorterStemmer
 from sklearn.metrics import classification_report
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
@@ -82,13 +82,13 @@ def build_model():
     ])
 
     parameters = {
-        'features__text_pipeline__vect__ngram_range': [(1,1), (2,2), (1,2)],
+        'features__text_pipeline__vect__ngram_range': [(1,1), (1,2)],
         'clf__estimator__n_estimators': [50, 100],
         'clf__estimator__min_samples_split': [2, 3],
         'clf__estimator__criterion': ['gini', 'entropy']
     }
 
-    cv = GridSearchCV(pipeline, param_grid=parameters)
+    cv = RandomizedSearchCV(pipeline, param_distributions=parameters, cv=2)
 
     return cv
 
